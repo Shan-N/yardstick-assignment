@@ -13,7 +13,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onDelete, onUpdate }) => {
   const [editedTask, setEditedTask] = useState<Partial<ITask>>({});
 
   const handleEditClick = (task: ITask) => {
-    setEditTaskId(task._id);
+    setEditTaskId(task._id as string | null);
     setEditedTask({ ...task });
   };
 

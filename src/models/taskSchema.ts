@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface ITask extends Document {
+  _id: string | null;
   title: string;
   description: string;
   dueDate: Date;

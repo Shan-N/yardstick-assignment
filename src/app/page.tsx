@@ -62,7 +62,7 @@ const Home = () => {
 
   const handleUpdateTaskStatus = async (id: string) => {
     try {
-      const task = tasks.find((t) => t._id.toString() === id);
+      const task = tasks.find((t:ITask) => t._id.toString() === id);
       if (task) {
         const updatedTask = { ...task, isCompleted: !task.isCompleted };
         await fetch('/api/tasks', {
