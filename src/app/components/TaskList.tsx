@@ -13,7 +13,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onDelete, onUpdate }) => {
   const [editedTask, setEditedTask] = useState<Partial<ITask>>({});
 
   const handleEditClick = (task: ITask) => {
-    setEditTaskId(task._id as string | null);
+    setEditTaskId(task._id as string);
     setEditedTask({ ...task });
   };
 
@@ -67,7 +67,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onDelete, onUpdate }) => {
     <div className="bg-gray-50 p-4 grid gap-4">
       {tasks.map((task) => (
         <motion.div 
-          key={task._id.toString()} 
+          key={task._id!.toString()} 
           className="bg-white shadow-md rounded-lg p-4 transition-transform hover:scale-105"
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -89,7 +89,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onDelete, onUpdate }) => {
               <input
                 type="date"
                 value={new Date(editedTask.dueDate || '').toISOString().substr(0, 10)}
-                onChange={(e) => setEditedTask({ ...editedTask, dueDate: e.target.value })}
+                onChange={(e) => setEditedTask({ ...editedTask, dueDate: new Date(e.target.value) })}
                 className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400"
               />
               <div className="flex gap-2">
@@ -128,7 +128,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onDelete, onUpdate }) => {
                   {task.isCompleted ? 'Completed' : 'Mark Complete'}
                 </button>
                 <button
-                  onClick={() => onDelete(task._id.toString())}
+                  onClick={() => onDelete(task._id!.toString())}
                   className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
                 >
                   Delete

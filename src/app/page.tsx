@@ -60,20 +60,19 @@ const Home = () => {
     }
   };
 
-  const handleUpdateTaskStatus = async (id: string) => {
+  const handleUpdateTaskStatus = async (task: ITask) => {
     try {
-      const task = tasks.find((t:ITask) => t._id.toString() === id);
-      if (task) {
-        const updatedTask = { ...task, isCompleted: !task.isCompleted };
-        await fetch('/api/tasks', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ id, updates: updatedTask }),
-        });
-        fetchTasks();
-      }
+      const updatedTask = { ...task, isCompleted: !task.isCompleted };
+  
+      await fetch('/api/tasks', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: task._id, updates: updatedTask }),
+      });
+  
+      fetchTasks();
     } catch (error) {
       console.error('Error updating task status:', error);
     }

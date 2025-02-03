@@ -4,23 +4,37 @@ import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 
 interface TaskFormProps {
-  task?: ITask;
+  task?: ITask | null;
   onSubmit: (data: ITask) => void;
 }
 
+interface TaskFormData {
+  title: string;
+  description: string;
+  dueDate: string; // or Date if preferred
+}
+
+
 const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit }) => {
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<ITask>();
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<TaskFormData>();
 
   useEffect(() => {
     if (task && !task._id) {
-      setValue('title', task.title);
+      setValue('title', task.title || '');
       setValue('description', task.description);
       setValue('dueDate', task.dueDate.toString());
     }
   }, [task, setValue]);
 
-  const handleFormSubmit = (data: ITask) => {
-    onSubmit(data);
+  const handleFormSubmit = (data: TaskFormData) => {
+    const taskData = {
+      ...task, // Keep existing properties from the original task if updating
+      title: data.title,
+      description: data.description,
+      dueDate: new Date(data.dueDate),
+    };
+  
+    onSubmit(taskData as ITask);
   };
 
   return (
