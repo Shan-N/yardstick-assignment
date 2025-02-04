@@ -8,6 +8,10 @@ export interface ITask extends Document {
   isCompleted: boolean;
 }
 
+export interface IToggle extends Document {
+  isCompleted: boolean;
+}
+
 const taskSchema = new Schema<ITask>({
   title: { type: String, required: true },
   description: { type: String, required: true },

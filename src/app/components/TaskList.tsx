@@ -1,4 +1,4 @@
-import { ITask } from '@/models/taskSchema';
+import { ITask, IToggle } from '@/models/taskSchema';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
@@ -10,7 +10,17 @@ interface TaskListProps {
 
 const TaskList: React.FC<TaskListProps> = ({ tasks, onDelete, onUpdate }) => {
   const [editTaskId, setEditTaskId] = useState<string | null>(null);
-  const [editedTask, setEditedTask] = useState<Partial<ITask>>({});
+  const [editedTask, setEditedTask] = useState<{
+    _id: string | null;
+    title: string;
+    description: string;
+    dueDate: Date;
+  }>({
+    _id: '',
+    title: '',
+    description: '',
+    dueDate: new Date(),
+  });
 
   const handleEditClick = (task: ITask) => {
     setEditTaskId(task._id as string);
@@ -30,7 +40,8 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onDelete, onUpdate }) => {
 
         if (response.ok) {
           const updatedTask = await response.json();
-          onUpdate(updatedTask);
+          // Update the task list locally without waiting for a full GET request
+          onUpdate(updatedTask); // `onUpdate` should handle updating the local state in `Home.tsx`
           setEditTaskId(null);
         } else {
           console.error('Failed to update task');
@@ -41,20 +52,21 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onDelete, onUpdate }) => {
     }
   };
 
-  const handleToggleComplete = async (task: ITask) => {
+  const handleToggleComplete = async (task: IToggle) => {
     try {
-      const updatedStatus = !task.isCompleted;
+      const updatedTask = { ...task, isCompleted: !task.isCompleted }; // Toggle correctly
+  
       const response = await fetch('/api/tasks', {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id: task._id, updates: { isCompleted: updatedStatus } }),
+        body: JSON.stringify({ id: task._id, updates: updatedTask }), // ✅ Send the full updated task
       });
-
+  
       if (response.ok) {
-        const updatedTask = await response.json();
-        onUpdate(updatedTask);
+        const updatedTaskFromServer = await response.json();
+        onUpdate(updatedTaskFromServer); // ✅ Update UI with latest data
       } else {
         console.error('Failed to toggle completion');
       }
@@ -62,7 +74,6 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onDelete, onUpdate }) => {
       console.error('Error toggling completion:', error);
     }
   };
-
   return (
     <div className="bg-gray-50 p-4 grid gap-4">
       {tasks.map((task) => (
@@ -122,11 +133,11 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onDelete, onUpdate }) => {
                 </button>
                 <button
                   onClick={() => handleToggleComplete(task)}
-                  disabled={task.isCompleted}
-                  className={`px-4 py-2 rounded-lg ${task.isCompleted ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'} text-white`}
+                  className={`px-4 py-2 rounded-lg ${task.isCompleted ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600'} text-white`}
                 >
-                  {task.isCompleted ? 'Completed' : 'Mark Complete'}
+                  {task.isCompleted ? 'Mark Incomplete' : 'Mark Complete'}
                 </button>
+
                 <button
                   onClick={() => onDelete(task._id!.toString())}
                   className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"

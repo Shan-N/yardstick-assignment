@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
-import Task from "@/models/taskSchema";
+import Task, { IToggle } from "@/models/taskSchema";
 import { connect } from "@/dbConfig/db";
 import { ITask } from "@/models/taskSchema";
+
+interface IFlask {
+  _id: string | null;
+  title: string;
+  description: string;
+  dueDate: Date;
+}
 
 connect();
 export async function GET() {
@@ -29,6 +36,18 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   const { id, updates }: { id: string; updates: ITask } = await req.json();
+
+  try {
+    const updatedTask = await Task.findByIdAndUpdate(id, updates, { new: true });
+    return NextResponse.json(updatedTask);
+  } catch (error) {
+    return NextResponse.json({ message: 'Failed to update task' }, { status: 500 });
+    return NextResponse.json({error});
+  }
+}
+
+export async function PATCH(req: Request) {
+  const { id, updates }: { id: string; updates: IToggle } = await req.json();
 
   try {
     const updatedTask = await Task.findByIdAndUpdate(id, updates, { new: true });

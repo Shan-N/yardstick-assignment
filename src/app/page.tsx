@@ -1,6 +1,6 @@
 'use client';
 
-import { ITask } from '@/models/taskSchema';
+import { ITask, IToggle } from '@/models/taskSchema';
 import { useState, useEffect } from 'react';
 import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
@@ -36,9 +36,9 @@ const Home = () => {
             },
             body: JSON.stringify(task),
           });
+          fetchTasks();
 
       await res.json();
-      fetchTasks();
       setSelectedTask(null);
     } catch (error) {
       console.error('Error submitting task:', error);
@@ -63,20 +63,21 @@ const Home = () => {
   const handleUpdateTaskStatus = async (task: ITask) => {
     try {
       const updatedTask = { ...task, isCompleted: !task.isCompleted };
-  
+
+      // Only send a PATCH request for updating the completion status
       await fetch('/api/tasks', {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ id: task._id, updates: updatedTask }),
       });
-  
-      fetchTasks();
+      await fetchTasks();
     } catch (error) {
       console.error('Error updating task status:', error);
     }
   };
+
 
   useEffect(() => {
     fetchTasks();
