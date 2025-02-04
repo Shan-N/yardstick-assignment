@@ -3,12 +3,7 @@ import Task, { IToggle } from "@/models/taskSchema";
 import { connect } from "@/dbConfig/db";
 import { ITask } from "@/models/taskSchema";
 
-interface IFlask {
-  _id: string | null;
-  title: string;
-  description: string;
-  dueDate: Date;
-}
+
 
 connect();
 export async function GET() {

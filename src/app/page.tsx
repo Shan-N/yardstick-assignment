@@ -1,6 +1,6 @@
 'use client';
 
-import { ITask, IToggle } from '@/models/taskSchema';
+import { ITask} from '@/models/taskSchema';
 import { useState, useEffect } from 'react';
 import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
