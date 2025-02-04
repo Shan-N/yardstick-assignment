@@ -4,6 +4,7 @@ import { ITask} from '@/models/taskSchema';
 import { useState, useEffect } from 'react';
 import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
+import { Toaster } from 'react-hot-toast';
 
 const Home = () => {
   const [tasks, setTasks] = useState<ITask[]>([]);
@@ -85,6 +86,7 @@ const Home = () => {
 
   return (
     <div>
+      <Toaster />
       <div className="text-2xl text-fuchsia-500 text-center">Task Management</div>
       <TaskForm task={selectedTask ?? undefined} onSubmit={handleTaskSubmit} />
       <TaskList tasks={tasks} onDelete={handleTaskDelete} onUpdate={handleUpdateTaskStatus} />

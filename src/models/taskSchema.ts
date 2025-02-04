@@ -9,6 +9,7 @@ export interface ITask extends Document {
 }
 
 export interface IToggle extends Document {
+  _id: string | null;
   isCompleted: boolean;
 }
 
